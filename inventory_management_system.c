@@ -5,7 +5,7 @@
 struct inventory
 {
     char name[50];
-    int quantity; // Quantity of the product
+    int quantity; 
     struct inventory *next;
 };
 struct inventory *top = NULL;
@@ -13,10 +13,6 @@ struct inventory *top = NULL;
 void push(char pname[], int pquantity)
 {
     struct inventory *newNode = (struct inventory*)malloc(sizeof(struct inventory));
-    if(newNode == NULL) {
-        printf("Memory allocation failed\n");
-        return;
-    }
     strcpy(newNode->name, pname);
     newNode->quantity = pquantity;
     newNode->next = top;
@@ -118,7 +114,7 @@ int main()
 
     while (1)
     {
-        printf("Enter your option:\n1 for add your product\n2 for show the list\n3 for dead stock\n4 for sell\n5 for delete product\n");
+        printf("  |**Enter your option**|\n1: Add your product\n2: Show the list\n3: Dead stock\n4: Sell\n5: Delete product\n6: Exit\n");
         scanf("%d", &option);
 
         switch (option)
@@ -130,7 +126,6 @@ int main()
             scanf("%d", &pquantity);
             push(pname, pquantity);
             break;
-
         case 2:
             showinventory();
             break;
@@ -138,7 +133,6 @@ int main()
         case 3:
             deadstock();
             break;
-
         case 4:
             printf("Enter product name to sell: ");
             scanf("%s", pname);
@@ -146,13 +140,14 @@ int main()
             scanf("%d", &sellQuantity);
             sell(pname, sellQuantity);
             break;
-
         case 5:
             printf("Enter product name to delete: ");
             scanf("%s", pname);
             deleteProduct(pname);
             break;
-
+        case 6:
+            printf("|**Exiting**|");
+            return 0;    
         default:
             break;
         }
