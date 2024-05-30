@@ -1,0 +1,12 @@
+ID: 1717086927-6863 Name: mojo Quantity: 5
+ID: 1717086921-788 Name: pepsi Quantity: 10
+ID: 1717086914-3106 Name: coke Quantity: 20
+ID: Quantity: Name: 5 Quantity: 0
+ID: Name: Name: mojo Quantity: 0
+ID: ID: Name: 1717086677-228 Quantity: 0
+ID: Quantity: Name: 10 Quantity: 0
+ID: Name: Name: pepsi Quantity: 0
+ID: ID: Name: 1717086671-2160 Quantity: 0
+ID: Quantity: Name: 20 Quantity: 0
+ID: Name: Name: coke Quantity: 0
+ID: ID: Name: 1717086665-2296 Quantity: 0

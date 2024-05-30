@@ -1,9 +1,13 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<windows.h>
+#define FILENAME "inventory.txt"
+#include<time.h>
 
 struct inventory
 {
+    char id[20];
     char name[50];
     int quantity; 
     struct inventory *next;
@@ -12,11 +16,17 @@ struct inventory *top = NULL;
 
 void push(char pname[], int pquantity)
 {
-    struct inventory *newNode = (struct inventory*)malloc(sizeof(struct inventory));
+    struct inventory *newNode = (struct inventory *)malloc(sizeof(struct inventory));
     strcpy(newNode->name, pname);
     newNode->quantity = pquantity;
+
+    generateUniqueId(newNode->id);
+
     newNode->next = top;
     top = newNode;
+
+    // Save inventory data to file after adding the product
+    saveInventoryToFile();
 }
 
 void showinventory()
@@ -26,7 +36,7 @@ void showinventory()
     printf("List of products:\n");
     while (ptr != NULL)
     {
-        printf("Product name: %s . Quantity: %d\n", ptr->name, ptr->quantity);
+        printf("Product ID: %s, Name: %s, Quantity: %d\n", ptr->id, ptr->name, ptr->quantity);
         ptr = ptr->next;
     }
 }
@@ -104,6 +114,102 @@ void deleteProduct(char pname[])
     }
     printf("Product not found in inventory.\n");
 }
+void loadingScreen(int duration, int steps) {
+    int i;
+    int sleepDuration = duration / steps; 
+
+    printf("         Loading\n [");
+    for (i = 0; i < steps; i++) {
+        printf("#"); 
+        fflush(stdout); 
+        Sleep(sleepDuration); 
+    }
+    printf("]\n"); 
+}
+void printBoxedText(const char *text) {
+    int length = strlen(text);
+    int i;
+    printf("+");
+    for (i = 0; i < length + 2; i++) {
+        printf("-");
+    }
+    printf("+\n");  
+    printf("| %s |\n", text);
+    printf("+");
+    for (i = 0; i < length + 2; i++) {
+        printf("-");
+    }
+    printf("+\n");
+}
+
+void start()
+{
+        const char *text = "Welcome to IMS";
+        printBoxedText(text);
+        printf("Press Enter to continue...\n");
+        getchar();
+        loadingScreen(2000, 20);
+        printf("proceeding with the rest of the program...\n");
+        Sleep(1000);
+
+}
+
+void loadInventoryFromFile()
+{
+    FILE *file = fopen(FILENAME, "r");
+    if (file == NULL)
+    {
+        printf("No inventory data found.\n");
+        return;
+    }
+
+    char id[20], name[50];
+    int quantity;
+    while (fscanf(file, "%s %s %d", id, name, &quantity) != EOF)
+    {
+        struct inventory *newNode = (struct inventory *)malloc(sizeof(struct inventory));
+        strcpy(newNode->id, id);
+        strcpy(newNode->name, name);
+        newNode->quantity = quantity;
+        newNode->next = top;
+        top = newNode;
+    }
+
+    fclose(file);
+}
+
+
+void saveInventoryToFile()
+{
+    FILE *file = fopen(FILENAME, "w");
+    if (file == NULL)
+    {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    struct inventory *ptr = top;
+    while (ptr != NULL)
+    {
+        fprintf(file, "ID: %s Name: %s Quantity: %d\n", ptr->id, ptr->name, ptr->quantity);
+        ptr = ptr->next;
+    }
+
+    fclose(file);
+}
+
+void generateUniqueId(char id[])
+{
+    // Generate a timestamp component based on current time
+    long long timestamp = (long long)time(NULL);
+
+    // Generate a random component
+    int randomNum = rand() % 10000; // Adjust the range as needed
+
+    // Combine timestamp and random number to create unique ID
+    sprintf(id, "%lld-%d", timestamp, randomNum);
+}
+
 
 int main()
 {
@@ -111,7 +217,9 @@ int main()
     char pname[50];
     int pquantity;
     int sellQuantity;
-
+    srand((unsigned int)time(NULL));
+    loadInventoryFromFile();
+    start();
     while (1)
     {
         printf("  |**Enter your option**|\n1: Add your product\n2: Show the list\n3: Dead stock\n4: Sell\n5: Delete product\n6: Exit\n");
@@ -147,6 +255,7 @@ int main()
             break;
         case 6:
             printf("|**Exiting**|");
+            saveInventoryToFile();
             return 0;    
         default:
             break;
